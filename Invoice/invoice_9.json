@@ -1,0 +1,14 @@
+{
+  "invoice_id": "INV-2026-0009",
+  "invoice_date": "2026-04-06",
+  "supplier_name": "OfficeMart Supplies",
+  "buyer_name": "ABC Manufacturing Sdn Bhd",
+  "description": "Office stationery purchase including pens, paper and files",
+  "amount": 185.40,
+  "currency": "MYR",
+  "irbm_unique_id": "LHDN-UUID-0009",
+  "validation_link": "https://myinvois.hasil.gov.my/invoice/LHDN-UUID-0009",
+  "status": "Validated",
+  "esg_label": "",
+  "esg_reason": ""
+}

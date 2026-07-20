@@ -1,0 +1,3 @@
+# Only these files are embedded by the default indexing command.
+# BursaMalaysia.pdf is retained as raw reference material and is not indexed.
+Bursa_ESG_reordered_E_S_G.pdf

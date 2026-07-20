@@ -1,0 +1,14 @@
+{
+  "invoice_id": "INV-2026-0007",
+  "invoice_date": "2026-04-06",
+  "supplier_name": "SecureAudit Consulting",
+  "buyer_name": "ABC Manufacturing Sdn Bhd",
+  "description": "Internal compliance audit and corporate governance review service",
+  "amount": 2500.00,
+  "currency": "MYR",
+  "irbm_unique_id": "LHDN-UUID-0007",
+  "validation_link": "https://myinvois.hasil.gov.my/invoice/LHDN-UUID-0007",
+  "status": "Validated",
+  "esg_label": "",
+  "esg_reason": ""
+}

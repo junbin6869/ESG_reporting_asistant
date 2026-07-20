@@ -1,0 +1,14 @@
+{
+  "invoice_id": "INV-2026-0006",
+  "invoice_date": "2026-04-06",
+  "supplier_name": "SkillUp Learning Solutions",
+  "buyer_name": "ABC Manufacturing Sdn Bhd",
+  "description": "Staff training workshop on employee development and technical upskilling",
+  "amount": 2200.00,
+  "currency": "MYR",
+  "irbm_unique_id": "LHDN-UUID-0006",
+  "validation_link": "https://myinvois.hasil.gov.my/invoice/LHDN-UUID-0006",
+  "status": "Validated",
+  "esg_label": "",
+  "esg_reason": ""
+}
