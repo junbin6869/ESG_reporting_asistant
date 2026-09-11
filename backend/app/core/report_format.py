@@ -8,23 +8,17 @@ REPORT_HEADINGS = [
     "4. Social Performance",
     "5. Governance Performance",
     "6. Notable ESG Themes and Expenditure Narratives",
-    "7. Guideline Alignment and Traceability",
-    "8. Data Quality, Limitations and Missing KPIs",
-    "9. Forward Actions and Human Review",
 ]
 
 PERFORMANCE_TABLE_HEADER = (
     "| Category | Reviewed invoices | Reviewed invoice spend | "
-    "Share of reviewed spend | Evidence coverage |"
+    "Share of reviewed spend |"
 )
 
 INVOICE_BASED_DISCLOSURE = (
     "This is an invoice-based ESG draft disclosure. Reviewed invoice spend "
     "indicates expenditure signals and does not prove achieved ESG impact or performance."
 )
-
-MISSING_KPI_TEXT = "Not available from invoice evidence"
-
 
 def report_contract() -> str:
     headings = "\n".join(REPORT_HEADINGS)
@@ -41,12 +35,22 @@ Mandatory reporting rules:
 - Never describe invoice spend as achieved ESG impact, emissions reduction,
   energy savings, safety improvement, community benefit, or governance outcome.
 - Treat Non-ESG invoices as excluded boundary items, not ESG performance.
-- Each Environmental, Social, and Governance section must cover observed invoice
-  themes, reviewed spend signals, guideline alignment, and missing outcome metrics.
-- For every unavailable impact KPI, write "{MISSING_KPI_TEXT}".
-- Guideline references must include source, section, page, and chunk ID.
-- Section 9 must separate Evidence collection, Operational actions, Governance
-  actions, and Human review.
+- Each Environmental, Social, and Governance section must start with a concise
+  category-level spend overview, followed by an "Observed Themes" subsection.
+- Every observed theme must state its total reviewed spend, cite the supplied
+  [INV-GRP:...] reference, and include the supplied guideline marker that explains
+  the related disclosure topic.
+- Immediately after every guideline-supported statement, append one or more
+  internal markers in the form {{{{GUIDELINE:<chunk_id>}}}} using chunk IDs
+  supplied in the available evidence. Statements that do not use guideline
+  evidence do not need this marker.
+- Do not write guideline Source, Topic, Section, Page, or a visible Chunk ID
+  yourself. The system validates each marker and renders the public metadata.
+- Use invoice citation tokens exactly as supplied in the reviewed invoice summary.
+- Invoice groups represent specific observed themes, not whole ESG categories.
+  Use the supplied [INV-GRP:...] token only for that theme's reviewed invoices.
+- When discussing a specific invoice, cite its supplied [INV:...] token. Never
+  invent, alter, or cite a token that was not supplied, and do not cite empty groups.
 - Use concise paragraphs, Markdown tables, and hyphen bullet lists.
 """.strip()
 
@@ -65,11 +69,7 @@ def validate_report_content(content: str) -> None:
 
     required_markers = [
         INVOICE_BASED_DISCLOSURE,
-        MISSING_KPI_TEXT,
-        "Evidence collection",
-        "Operational actions",
-        "Governance actions",
-        "Human review",
+        "Observed Themes",
     ]
     missing_markers = [
         marker
@@ -96,7 +96,6 @@ def _has_performance_table_header(content: str) -> bool:
         "reviewed invoices",
         "reviewed invoice spend",
         "share of reviewed spend",
-        "evidence coverage",
     ]
     for line in content.splitlines():
         if not line.strip().startswith("|"):

@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 type ReportBlock =
   | { type: "heading"; text: string }
   | { type: "table"; rows: string[][] }
-  | { type: "list"; items: string[] }
+  | { type: "list"; items: Array<{ text: string; level: number }> }
   | { type: "paragraph"; text: string };
 
 export function ReportContent({ content }: { content: string }) {
@@ -60,7 +60,7 @@ export function ReportContent({ content }: { content: string }) {
 
         if (block.type === "list") {
           const containsLimitation = block.items.some((item) =>
-            item.includes("Not available from invoice evidence")
+            item.text.includes("Not available from invoice evidence")
           );
           return (
             <ul
@@ -72,7 +72,12 @@ export function ReportContent({ content }: { content: string }) {
               }
             >
               {block.items.map((item, itemIndex) => (
-                <li key={itemIndex}>{cleanInlineMarkdown(item)}</li>
+                <li
+                  key={itemIndex}
+                  className={item.level > 0 ? "ml-5 list-[circle] text-slate-600" : ""}
+                >
+                  {cleanInlineMarkdown(item.text)}
+                </li>
               ))}
             </ul>
           );
@@ -82,9 +87,12 @@ export function ReportContent({ content }: { content: string }) {
           block.text.includes("Not available from invoice evidence") ||
           block.text.toLowerCase().includes("invoice-based esg draft disclosure") ||
           block.text.toLowerCase().includes("does not prove achieved esg impact");
+        const normalizedText = block.text.toLowerCase();
         const isEvidence =
-          block.text.toLowerCase().includes("chunk id") ||
-          block.text.toLowerCase().includes("chunk_id");
+          normalizedText.includes("source:") &&
+          normalizedText.includes("topic:") &&
+          normalizedText.includes("section:") &&
+          normalizedText.includes("page:");
 
         return (
           <p
@@ -144,10 +152,15 @@ function parseReport(content: string): ReportBlock[] {
       continue;
     }
 
-    if (line.startsWith("- ")) {
-      const items: string[] = [];
-      while (index < lines.length && lines[index].trim().startsWith("- ")) {
-        items.push(lines[index].trim().slice(2));
+    if (/^\s*-\s+/.test(lines[index])) {
+      const items: Array<{ text: string; level: number }> = [];
+      while (index < lines.length) {
+        const itemMatch = lines[index].match(/^(\s*)-\s+(.*)$/);
+        if (!itemMatch) break;
+        items.push({
+          text: itemMatch[2],
+          level: Math.floor(itemMatch[1].length / 2)
+        });
         index += 1;
       }
       blocks.push({ type: "list", items });

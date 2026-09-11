@@ -1,0 +1,91 @@
+﻿dataset_id,invoice_number,expected,predicted,correct,confidence,evidence_count,difficulty,reason
+MLI-001,EVAL-2026-0001,Environmental,Environmental,True,high,2,clear,"The invoice relates to maintenance of a rooftop solar system, which is an environmental initiative."
+MLI-002,EVAL-2026-0002,Environmental,Environmental,True,high,2,clear,"The invoice pertains to scheduled waste treatment and recycling services, which aligns with environmental waste management practices."
+MLI-003,EVAL-2026-0003,Environmental,Environmental,True,high,2,clear,"The invoice pertains to a water-efficiency audit, which aligns with environmental management practices."
+MLI-004,EVAL-2026-0004,Environmental,Environmental,True,high,1,clear,"The invoice relates to electric forklift lease and charging support, which has a significant environmental impact."
+MLI-005,EVAL-2026-0005,Environmental,Environmental,True,high,2,clear,"The invoice is for LED lighting retrofit aimed at energy efficiency, which aligns with environmental sustainability efforts."
+MLI-006,EVAL-2026-0006,Environmental,Environmental,True,high,2,clear,"The invoice relates to maintenance of a rainwater harvesting system, which is an environmental initiative."
+MLI-007,EVAL-2026-0007,Environmental,Environmental,True,high,1,hard,"The invoice is for recycled-content packaging materials, which directly relates to environmental sustainability."
+MLI-008,EVAL-2026-0008,Environmental,Environmental,True,high,1,clear,"The invoice pertains to greenhouse-gas inventory measurement and carbon data verification, which aligns with environmental reporting guidelines."
+MLI-009,EVAL-2026-0009,Environmental,Environmental,True,high,2,clear,"The invoice relates to air-emissions monitoring and filtration maintenance, which falls under environmental management."
+MLI-010,EVAL-2026-0010,Environmental,Environmental,True,high,2,clear,"The invoice is for the purchase of renewable electricity certificates, which aligns with environmental sustainability efforts."
+MLI-011,EVAL-2026-0011,Environmental,Environmental,True,high,2,clear,"The invoice is for native tree planting and site restoration, which aligns with environmental initiatives."
+MLI-012,EVAL-2026-0012,Environmental,Environmental,True,high,2,clear,"The invoice relates to the maintenance of a rooftop solar system, which is an environmental initiative."
+MLI-013,EVAL-2026-0013,Environmental,Environmental,True,high,2,clear,"The invoice pertains to scheduled waste treatment and recycling services, which aligns with environmental waste management practices."
+MLI-014,EVAL-2026-0014,Environmental,Environmental,True,high,1,clear,"The invoice pertains to a water-efficiency audit, which aligns with environmental sustainability practices."
+MLI-015,EVAL-2026-0015,Environmental,Environmental,True,high,1,clear,"The invoice relates to electric forklift lease and charging support, which has a significant environmental impact."
+MLI-016,EVAL-2026-0016,Environmental,Environmental,True,high,1,clear,"The invoice is for LED lighting retrofit aimed at energy efficiency, which aligns with environmental sustainability efforts."
+MLI-017,EVAL-2026-0017,Environmental,Environmental,True,high,2,clear,"The invoice relates to maintenance of a rainwater harvesting system, which is an environmental initiative."
+MLI-018,EVAL-2026-0018,Environmental,Environmental,True,high,1,hard,"The invoice is for recycled-content packaging materials, which directly relates to environmental sustainability."
+MLI-019,EVAL-2026-0019,Environmental,Environmental,True,high,2,clear,"The invoice pertains to greenhouse-gas inventory measurement and carbon data verification, which aligns with environmental reporting guidelines."
+MLI-020,EVAL-2026-0020,Environmental,Environmental,True,high,3,clear,"The invoice relates to air-emissions monitoring and filtration maintenance, which falls under environmental management."
+MLI-021,EVAL-2026-0021,Environmental,Environmental,True,high,1,clear,"The invoice is for the purchase of renewable electricity certificates, which directly relates to environmental sustainability efforts."
+MLI-022,EVAL-2026-0022,Environmental,Environmental,True,high,3,clear,"The invoice pertains to native tree planting and site restoration, which aligns with environmental initiatives."
+MLI-023,EVAL-2026-0023,Social,Social,True,high,2,clear,"The invoice is for occupational safety and health training, which aligns with health and safety indicators in the Social category."
+MLI-024,EVAL-2026-0024,Social,Social,True,high,1,clear,"The invoice relates to employee medical screening and health assessment, which falls under health and safety indicators."
+MLI-025,EVAL-2026-0025,Social,Social,True,high,1,clear,"The invoice is for a technical upskilling and career-development workshop for staff, which aligns with employee training indicators."
+MLI-026,EVAL-2026-0026,Social,Social,True,high,1,clear,"The invoice relates to employee mental-health counselling and wellness, which falls under social health and safety initiatives."
+MLI-027,EVAL-2026-0027,Social,Social,True,high,1,clear,"The invoice relates to ergonomic assessments and equipment, which supports employee health and safety."
+MLI-028,EVAL-2026-0028,Social,Social,True,high,1,hard,"The invoice is for diversity, equity, and inclusion training, which aligns with social workforce diversity initiatives."
+MLI-029,EVAL-2026-0029,Social,Social,True,high,2,clear,"The invoice supports community investment in education, aligning with social indicators."
+MLI-030,EVAL-2026-0030,Social,Social,True,high,2,clear,"The invoice is for first-aid certification and emergency-response training, which aligns with health and safety training indicators."
+MLI-031,EVAL-2026-0031,Social,Social,True,high,2,clear,"The invoice relates to employee childcare support and family wellbeing, which aligns with social responsibility initiatives."
+MLI-032,EVAL-2026-0032,Social,Social,True,high,2,hard,"The invoice relates to a structured apprenticeship placement and mentoring programme, which aligns with social workforce development."
+MLI-033,EVAL-2026-0033,Social,Social,True,high,1,clear,"The invoice is for personal protective equipment, which relates to health and safety for employees."
+MLI-034,EVAL-2026-0034,Social,Social,True,high,2,clear,"The invoice is for occupational safety and health training, which aligns with health and safety indicators in the Social category."
+MLI-035,EVAL-2026-0035,Social,Social,True,high,1,clear,"The invoice relates to employee medical screening, which falls under health and safety indicators."
+MLI-036,EVAL-2026-0036,Social,Social,True,high,1,clear,"The invoice is for a technical upskilling and career-development workshop for staff, which aligns with social workforce development initiatives."
+MLI-037,EVAL-2026-0037,Social,Social,True,high,1,clear,"The invoice relates to employee mental-health counselling, which falls under health and safety indicators in social disclosures."
+MLI-038,EVAL-2026-0038,Social,Social,True,high,1,clear,"The invoice relates to ergonomic assessments and equipment, which supports employee health and safety."
+MLI-039,EVAL-2026-0039,Social,Social,True,high,1,hard,"The invoice is for diversity, equity, and inclusion training, which aligns with social workforce diversity initiatives."
+MLI-040,EVAL-2026-0040,Social,Social,True,high,1,clear,"The invoice supports community investment in education, aligning with social indicators."
+MLI-041,EVAL-2026-0041,Social,Social,True,high,1,clear,"The invoice relates to first-aid certification and emergency-response training, which aligns with health and safety indicators in the Social category."
+MLI-042,EVAL-2026-0042,Social,Social,True,high,3,clear,"The invoice relates to employee childcare support and family wellbeing, which falls under social initiatives."
+MLI-043,EVAL-2026-0043,Social,Social,True,high,1,hard,"The invoice relates to a structured apprenticeship placement and mentoring programme, which aligns with social workforce development initiatives."
+MLI-044,EVAL-2026-0044,Governance,Governance,True,high,1,clear,"The invoice pertains to an internal controls audit and corporate-governance review service, which aligns with governance-related activities."
+MLI-045,EVAL-2026-0045,Governance,Social,False,high,1,hard,"The invoice relates to personal-data protection compliance, which aligns with social issues regarding data privacy and security."
+MLI-046,EVAL-2026-0046,Governance,Governance,True,high,1,clear,"The invoice pertains to anti-bribery and corruption compliance training, which aligns with governance-related indicators."
+MLI-047,EVAL-2026-0047,Governance,Social,False,high,1,hard,"The invoice is for a whistleblowing hotline service, which relates to social governance and accountability."
+MLI-048,EVAL-2026-0048,Governance,Governance,True,high,2,clear,"The invoice relates to a cybersecurity audit, which falls under governance-related indicators and assurance."
+MLI-049,EVAL-2026-0049,Governance,Governance,True,high,2,clear,"The invoice pertains to regulatory compliance legal advisory, which falls under governance-related activities."
+MLI-050,EVAL-2026-0050,Governance,Governance,True,high,2,clear,"The invoice pertains to a workshop on board governance and fiduciary duties, aligning with governance-related training."
+MLI-051,EVAL-2026-0051,Governance,Social,False,high,1,hard,"The invoice relates to a supplier code-of-conduct due-diligence assessment, which addresses social issues in the supply chain."
+MLI-052,EVAL-2026-0052,Governance,Governance,True,high,2,clear,"The invoice pertains to an independent ESG assurance review, which aligns with governance-related indicators and assurance requirements."
+MLI-053,EVAL-2026-0053,Governance,Governance,True,high,2,clear,"The invoice pertains to tax compliance controls, which falls under governance-related services."
+MLI-054,EVAL-2026-0054,Governance,Governance,True,high,2,hard,"The invoice relates to a records-retention policy and information governance review, which falls under governance practices."
+MLI-055,EVAL-2026-0055,Governance,Non-ESG,False,high,0,hard,The invoice does not relate to any specific ESG category based on the provided evidence.
+MLI-056,EVAL-2026-0056,Governance,Governance,True,high,1,clear,"The invoice pertains to an internal controls audit and corporate-governance review service, which aligns with governance-related activities."
+MLI-057,EVAL-2026-0057,Governance,Social,False,high,2,hard,"The invoice relates to personal-data protection compliance, which aligns with social issues regarding data privacy and security."
+MLI-058,EVAL-2026-0058,Governance,Governance,True,high,1,clear,"The invoice is for anti-bribery and corruption compliance training, which aligns with governance-related indicators."
+MLI-059,EVAL-2026-0059,Governance,Social,False,high,1,hard,"The invoice is for a whistleblowing hotline service, which relates to social governance and accountability."
+MLI-060,EVAL-2026-0060,Governance,Governance,True,high,2,clear,"The invoice relates to a cybersecurity audit, which falls under governance-related indicators."
+MLI-061,EVAL-2026-0061,Governance,Governance,True,high,3,clear,"The invoice pertains to regulatory compliance legal advisory, which falls under governance-related services."
+MLI-062,EVAL-2026-0062,Governance,Governance,True,high,1,clear,"The invoice pertains to a workshop on board governance and fiduciary duties, aligning with governance training."
+MLI-063,EVAL-2026-0063,Governance,Social,False,high,1,hard,"The invoice relates to a supplier code-of-conduct assessment, which addresses social issues in the supply chain."
+MLI-064,EVAL-2026-0064,Governance,Governance,True,high,2,clear,"The invoice pertains to an independent ESG assurance review, which aligns with governance-related indicators and assurance."
+MLI-065,EVAL-2026-0065,Governance,Governance,True,high,2,clear,"The invoice pertains to tax compliance controls, which falls under governance-related services."
+MLI-066,EVAL-2026-0066,Governance,Governance,True,high,2,hard,"The invoice pertains to a records-retention policy and information-governance review, which aligns with governance practices."
+MLI-067,EVAL-2026-0067,Governance,Governance,True,medium,1,hard,The invoice relates to software that may support governance-related activities.
+MLI-068,EVAL-2026-0068,Non-ESG,Non-ESG,True,high,0,clear,The invoice for general office stationery does not align with any specific ESG criteria.
+MLI-069,EVAL-2026-0069,Non-ESG,Social,False,medium,1,hard,"The invoice relates to catering for an internal meeting, which can be linked to social management aspects."
+MLI-070,EVAL-2026-0070,Non-ESG,Non-ESG,True,high,0,clear,The invoice for printing services does not align with any specific ESG guidelines provided.
+MLI-071,EVAL-2026-0071,Non-ESG,Social,False,high,1,hard,"The invoice relates to domestic courier charges for customer deliveries, which aligns with supply chain social issues."
+MLI-072,EVAL-2026-0072,Non-ESG,Non-ESG,True,high,0,clear,The invoice for office decorative items does not align with any specific ESG guidelines.
+MLI-073,EVAL-2026-0073,Non-ESG,Non-ESG,True,high,0,clear,The invoice does not relate to any specific ESG criteria or impacts.
+MLI-074,EVAL-2026-0074,Non-ESG,Environmental,False,medium,3,hard,"The invoice is for cleaning supplies, which relates to environmental management and waste management."
+MLI-075,EVAL-2026-0075,Non-ESG,Non-ESG,True,high,0,clear,The invoice for meeting room rental does not align with any specific ESG criteria.
+MLI-076,EVAL-2026-0076,Non-ESG,Social,False,high,1,hard,"The invoice relates to promotional merchandise for a customer appreciation event, which aligns with social engagement and stakeholder concerns."
+MLI-077,EVAL-2026-0077,Non-ESG,Non-ESG,True,high,0,clear,The invoice for vehicle servicing and tyre replacement does not align with any specific ESG guidelines provided.
+MLI-078,EVAL-2026-0078,Non-ESG,Non-ESG,True,high,0,clear,The invoice details routine administrative services with no clear ESG relevance.
+MLI-079,EVAL-2026-0079,Non-ESG,Non-ESG,True,high,0,hard,The invoice does not relate to any specific ESG criteria or guidelines.
+MLI-080,EVAL-2026-0080,Non-ESG,Non-ESG,True,high,0,clear,The invoice for general office stationery does not align with any specific ESG criteria.
+MLI-081,EVAL-2026-0081,Non-ESG,Social,False,medium,1,hard,"The invoice relates to refreshments and catering for an internal meeting, which aligns with social management aspects."
+MLI-082,EVAL-2026-0082,Non-ESG,Non-ESG,True,high,0,clear,The invoice for printing services does not align with any specific ESG guidelines.
+MLI-083,EVAL-2026-0083,Non-ESG,Social,False,high,1,hard,"The invoice relates to domestic courier charges for customer deliveries, which aligns with supply chain social issues."
+MLI-084,EVAL-2026-0084,Non-ESG,Non-ESG,True,high,0,clear,The invoice for office decorative items does not align with any specific ESG guidelines.
+MLI-085,EVAL-2026-0085,Non-ESG,Non-ESG,True,high,0,clear,The invoice does not relate to any specific ESG criteria or impacts as per the retrieved evidence.
+MLI-086,EVAL-2026-0086,Non-ESG,Non-ESG,True,high,0,hard,The invoice for cleaning supplies does not clearly align with any specific ESG category based on the provided evidence.
+MLI-087,EVAL-2026-0087,Non-ESG,Non-ESG,True,high,0,clear,The invoice does not relate to any specific ESG criteria or indicators.
+MLI-088,EVAL-2026-0088,Non-ESG,Social,False,high,1,hard,"The invoice relates to promotional merchandise for a customer appreciation event, which aligns with social engagement and stakeholder concerns."
+MLI-089,EVAL-2026-0089,Non-ESG,Non-ESG,True,high,0,clear,The invoice for vehicle servicing does not align with any specific ESG guidelines provided.
+MLI-090,EVAL-2026-0090,Non-ESG,Non-ESG,True,high,0,clear,The invoice details routine administrative services with no clear ESG relevance.

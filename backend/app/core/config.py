@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 BACKEND_ROOT = Path(__file__).resolve().parents[2]
+LOCAL_EMBEDDING_MODEL_DIR = BACKEND_ROOT / "models" / "default-embedding"
 
 load_dotenv(PROJECT_ROOT / ".env")
 load_dotenv(BACKEND_ROOT / ".env")
@@ -64,7 +65,12 @@ class Settings:
         relative_to=PROJECT_ROOT,
     )
     chroma_collection = os.getenv("CHROMA_COLLECTION", "esg_docs")
-    embedding_model = os.getenv("EMBEDDING_MODEL", "all-MiniLM-L6-v2")
+    embedding_model = os.getenv(
+        "EMBEDDING_MODEL",
+        str(LOCAL_EMBEDDING_MODEL_DIR)
+        if LOCAL_EMBEDDING_MODEL_DIR.is_dir()
+        else "all-MiniLM-L6-v2",
+    )
     embedding_device = os.getenv("EMBEDDING_DEVICE", "").strip()
     openai_api_key = os.getenv("OPENAI_API_KEY", "")
     llm_model = os.getenv("LLM_MODEL", "gpt-4o-mini")

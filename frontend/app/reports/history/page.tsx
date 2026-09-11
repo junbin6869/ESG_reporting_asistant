@@ -8,7 +8,7 @@ import { EmptyState, ErrorPanel, LoadingPanel } from "@/components/ui/StateViews
 import { PageHeader } from "@/components/ui/PageHeader";
 import {
   deleteReport,
-  downloadReportPdf,
+  downloadReportPackage,
   getReports,
   type GeneratedReport
 } from "@/lib/api";
@@ -139,10 +139,10 @@ export default function ReportHistoryPage() {
                       <button
                         className="inline-flex h-9 items-center gap-2 rounded-lg bg-slate-900 px-3 text-sm font-medium text-white hover:bg-slate-800"
                         type="button"
-                        onClick={() => void downloadReportPdf(report)}
+                        onClick={() => void downloadReportPackage(report)}
                       >
                         <Download className="h-4 w-4" />
-                        Download
+                        Download report
                       </button>
                       <button
                         className="inline-flex h-9 items-center gap-2 rounded-lg border border-red-200 px-3 text-sm font-medium text-red-600 hover:bg-red-50 disabled:cursor-not-allowed disabled:text-slate-300"

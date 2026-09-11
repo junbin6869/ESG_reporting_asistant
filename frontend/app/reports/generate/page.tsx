@@ -4,6 +4,7 @@ import {
   CalendarDays,
   CheckCircle2,
   Circle,
+  Download,
   FileText,
   Loader2,
   Sparkles,
@@ -15,6 +16,7 @@ import { EmptyState, ErrorPanel } from "@/components/ui/StateViews";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { ReportContent } from "@/components/reports/ReportContent";
 import {
+  downloadReportPackage,
   getAgentRun,
   getRecentInvoices,
   startAgenticReport,
@@ -22,6 +24,35 @@ import {
   type GeneratedReport,
   type InvoiceRow
 } from "@/lib/api";
+
+const ACTIVE_REPORT_RUN_STORAGE_KEY = "esg-assistant.active-report-run-id";
+
+function storeActiveReportRun(runId: string) {
+  try {
+    window.localStorage.setItem(ACTIVE_REPORT_RUN_STORAGE_KEY, runId);
+  } catch {
+    // The report still runs server-side when browser storage is unavailable.
+  }
+}
+
+function readActiveReportRun() {
+  try {
+    return window.localStorage.getItem(ACTIVE_REPORT_RUN_STORAGE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function clearActiveReportRun(runId?: string) {
+  try {
+    const storedRunId = window.localStorage.getItem(ACTIVE_REPORT_RUN_STORAGE_KEY);
+    if (!runId || storedRunId === runId) {
+      window.localStorage.removeItem(ACTIVE_REPORT_RUN_STORAGE_KEY);
+    }
+  } catch {
+    // Stale browser storage is harmless when localStorage cannot be accessed.
+  }
+}
 
 export default function GenerateReportPage() {
   const [invoices, setInvoices] = useState<InvoiceRow[]>([]);
@@ -51,6 +82,22 @@ export default function GenerateReportPage() {
 
   useEffect(() => {
     void loadReportContext();
+
+    const runId = readActiveReportRun();
+    if (!runId) return;
+
+    setIsGenerating(true);
+    void getAgentRun(runId)
+      .then((run) => setAgentRun(run))
+      .catch((restoreError) => {
+        clearActiveReportRun(runId);
+        setError(
+          restoreError instanceof Error
+            ? restoreError.message
+            : "Unable to restore the background report task."
+        );
+        setIsGenerating(false);
+      });
   }, []);
 
   const years = useMemo(() => {
@@ -76,6 +123,7 @@ export default function GenerateReportPage() {
 
     setIsGenerating(true);
     setError(null);
+    setReport(null);
 
     try {
       const run = await startAgenticReport({
@@ -83,6 +131,7 @@ export default function GenerateReportPage() {
         period_start: `${selectedYear}-01-01`,
         period_end: `${selectedYear}-12-31`
       });
+      storeActiveReportRun(run.id);
       setAgentRun(run);
     } catch (generateError) {
       setError(
@@ -90,18 +139,26 @@ export default function GenerateReportPage() {
           ? generateError.message
           : "Unable to generate report."
       );
+      setIsGenerating(false);
     }
   }
 
   useEffect(() => {
-    if (!agentRun || ["completed", "failed"].includes(agentRun.status)) {
+    if (!agentRun) {
+      setIsGenerating(false);
+      return;
+    }
+
+    if (["completed", "failed"].includes(agentRun.status)) {
       setIsGenerating(false);
       if (agentRun?.report) {
         setReport(agentRun.report);
       }
+      clearActiveReportRun(agentRun.id);
       return;
     }
 
+    setIsGenerating(true);
     const timer = window.setTimeout(async () => {
       try {
         const nextRun = await getAgentRun(agentRun.id);
@@ -112,9 +169,8 @@ export default function GenerateReportPage() {
             ? pollError.message
             : "Unable to fetch agent status."
         );
-        setIsGenerating(false);
       }
-    }, 1000);
+    }, 500);
 
     return () => window.clearTimeout(timer);
   }, [agentRun]);
@@ -194,21 +250,23 @@ export default function GenerateReportPage() {
               type="submit"
             >
               <Sparkles className="h-4 w-4" />
-              {isGenerating ? "Generating..." : "Generate draft report"}
+              {isGenerating
+                ? "Generating in background..."
+                : "Generate draft report"}
             </button>
           </form>
 
-          <section className="rounded-lg border border-slate-200 bg-white shadow-soft">
+          <section className="flex h-[420px] flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-soft">
             <div className="border-b border-slate-200 px-5 py-4">
               <h3 className="text-base font-semibold text-slate-950">
                 Agent state
               </h3>
               <p className="mt-1 text-sm text-slate-500">
-                Live progress from the report generation agent.
+                Live progress from the background report worker.
               </p>
             </div>
 
-            <div className="p-5">
+            <div className="min-h-0 flex-1 overflow-y-auto p-5">
               {error ? (
                 <ErrorPanel message={error} onRetry={loadReportContext} />
               ) : agentRun ? (
@@ -236,17 +294,27 @@ export default function GenerateReportPage() {
           <div className="p-5">
             {report ? (
               <article className="prose prose-slate max-w-none">
-                <div className="mb-4 flex items-center gap-3">
+                <div className="mb-4 flex items-center justify-between gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-100 text-slate-700">
                     <FileText className="h-5 w-5" />
                   </div>
-                  <div>
+                  <div className="mr-auto">
                     <h4 className="m-0 text-base font-semibold text-slate-950">
                       {report.title}
                     </h4>
                     <p className="m-0 text-sm text-slate-500">
                       {report.period_start} to {report.period_end}
                     </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      className="inline-flex h-9 items-center gap-2 rounded-lg bg-slate-900 px-3 text-sm font-medium text-white hover:bg-slate-800"
+                      type="button"
+                      onClick={() => void downloadReportPackage(report)}
+                    >
+                      <Download className="h-4 w-4" />
+                      Download report
+                    </button>
                   </div>
                 </div>
                 <div className="rounded-lg bg-slate-50 p-4">
@@ -276,13 +344,13 @@ function AgentRunPanel({ run }: { run: AgentRun }) {
         <p className="mt-1 text-sm font-medium text-slate-900">{run.status}</p>
         {run.error ? <p className="mt-2 text-sm text-red-700">{run.error}</p> : null}
       </div>
-      <div className="space-y-3">
+      <div className="space-y-3" aria-live="polite">
         {run.steps.map((step) => (
           <div key={step.id} className="flex gap-3 rounded-lg border border-slate-200 p-3">
             <StepIcon status={step.status} />
             <div>
               <p className="text-sm font-medium text-slate-900">{step.label}</p>
-              <p className="mt-1 text-sm text-slate-500">
+              <p className="mt-1 text-sm leading-6 text-slate-500">
                 {step.detail ?? step.status}
               </p>
             </div>

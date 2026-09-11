@@ -170,6 +170,32 @@ def retrieve_guidelines(
     ]
 
 
+def get_guideline_document_by_id(chunk_id: str) -> Document | None:
+    """Fetch one guideline chunk by its exact Chroma ID without vector search."""
+    cleaned_chunk_id = chunk_id.strip()
+    if not cleaned_chunk_id:
+        return None
+
+    result = get_vector_store().get(
+        ids=[cleaned_chunk_id],
+        include=["documents", "metadatas"],
+    )
+    ids = [str(item) for item in result.get("ids") or []]
+    if cleaned_chunk_id not in ids:
+        return None
+
+    index = ids.index(cleaned_chunk_id)
+    documents = result.get("documents") or []
+    metadatas = result.get("metadatas") or []
+    page_content = documents[index] if index < len(documents) else ""
+    metadata = metadatas[index] if index < len(metadatas) else {}
+    return Document(
+        id=cleaned_chunk_id,
+        page_content=str(page_content or ""),
+        metadata=dict(metadata or {}),
+    )
+
+
 async def aretrieve_guidelines(
     query: str,
     top_k: int = 3,

@@ -1,0 +1,134 @@
+[
+  {
+    "file": "output/pdf/ocr_test_invoices/native_01_OCR-N-001.pdf",
+    "condition": "native",
+    "supplier_name": "Green Solar Services Sdn Bhd",
+    "buyer_name": "ABC Manufacturing Sdn Bhd",
+    "invoice_date": "2026-09-03",
+    "amount": 1250.0,
+    "description": "Solar panel maintenance",
+    "invoice_number": "OCR-N-001",
+    "currency": "MYR"
+  },
+  {
+    "file": "output/pdf/ocr_test_invoices/native_02_OCR-N-002.pdf",
+    "condition": "native",
+    "supplier_name": "SafeWork Academy Sdn Bhd",
+    "buyer_name": "ABC Manufacturing Sdn Bhd",
+    "invoice_date": "2026-09-05",
+    "amount": 2280.0,
+    "description": "Employee safety training",
+    "invoice_number": "OCR-N-002",
+    "currency": "MYR"
+  },
+  {
+    "file": "output/pdf/ocr_test_invoices/native_03_OCR-N-003.pdf",
+    "condition": "native",
+    "supplier_name": "SecureAudit Consulting Sdn Bhd",
+    "buyer_name": "ABC Manufacturing Sdn Bhd",
+    "invoice_date": "2026-09-07",
+    "amount": 4650.0,
+    "description": "Internal controls audit",
+    "invoice_number": "OCR-N-003",
+    "currency": "MYR"
+  },
+  {
+    "file": "output/pdf/ocr_test_invoices/native_04_OCR-N-004.pdf",
+    "condition": "native",
+    "supplier_name": "OfficeMart Supplies Enterprise",
+    "buyer_name": "ABC Manufacturing Sdn Bhd",
+    "invoice_date": "2026-09-09",
+    "amount": 430.0,
+    "description": "General office stationery",
+    "invoice_number": "OCR-N-004",
+    "currency": "MYR"
+  },
+  {
+    "file": "output/pdf/ocr_test_invoices/clean_scan_01_OCR-S-001.pdf",
+    "condition": "clean_scan",
+    "supplier_name": "Green Solar Services Sdn Bhd",
+    "buyer_name": "ABC Manufacturing Sdn Bhd",
+    "invoice_date": "2026-09-03",
+    "amount": 1250.0,
+    "description": "Solar panel maintenance",
+    "invoice_number": "OCR-S-001",
+    "currency": "MYR"
+  },
+  {
+    "file": "output/pdf/ocr_test_invoices/clean_scan_02_OCR-S-002.pdf",
+    "condition": "clean_scan",
+    "supplier_name": "SafeWork Academy Sdn Bhd",
+    "buyer_name": "ABC Manufacturing Sdn Bhd",
+    "invoice_date": "2026-09-05",
+    "amount": 2280.0,
+    "description": "Employee safety training",
+    "invoice_number": "OCR-S-002",
+    "currency": "MYR"
+  },
+  {
+    "file": "output/pdf/ocr_test_invoices/clean_scan_03_OCR-S-003.pdf",
+    "condition": "clean_scan",
+    "supplier_name": "SecureAudit Consulting Sdn Bhd",
+    "buyer_name": "ABC Manufacturing Sdn Bhd",
+    "invoice_date": "2026-09-07",
+    "amount": 4650.0,
+    "description": "Internal controls audit",
+    "invoice_number": "OCR-S-003",
+    "currency": "MYR"
+  },
+  {
+    "file": "output/pdf/ocr_test_invoices/clean_scan_04_OCR-S-004.pdf",
+    "condition": "clean_scan",
+    "supplier_name": "OfficeMart Supplies Enterprise",
+    "buyer_name": "ABC Manufacturing Sdn Bhd",
+    "invoice_date": "2026-09-09",
+    "amount": 430.0,
+    "description": "General office stationery",
+    "invoice_number": "OCR-S-004",
+    "currency": "MYR"
+  },
+  {
+    "file": "output/pdf/ocr_test_invoices/degraded_scan_01_OCR-D-001.pdf",
+    "condition": "degraded_scan",
+    "supplier_name": "Green Solar Services Sdn Bhd",
+    "buyer_name": "ABC Manufacturing Sdn Bhd",
+    "invoice_date": "2026-09-03",
+    "amount": 1250.0,
+    "description": "Solar panel maintenance",
+    "invoice_number": "OCR-D-001",
+    "currency": "MYR"
+  },
+  {
+    "file": "output/pdf/ocr_test_invoices/degraded_scan_02_OCR-D-002.pdf",
+    "condition": "degraded_scan",
+    "supplier_name": "SafeWork Academy Sdn Bhd",
+    "buyer_name": "ABC Manufacturing Sdn Bhd",
+    "invoice_date": "2026-09-05",
+    "amount": 2280.0,
+    "description": "Employee safety training",
+    "invoice_number": "OCR-D-002",
+    "currency": "MYR"
+  },
+  {
+    "file": "output/pdf/ocr_test_invoices/degraded_scan_03_OCR-D-003.pdf",
+    "condition": "degraded_scan",
+    "supplier_name": "SecureAudit Consulting Sdn Bhd",
+    "buyer_name": "ABC Manufacturing Sdn Bhd",
+    "invoice_date": "2026-09-07",
+    "amount": 4650.0,
+    "description": "Internal controls audit",
+    "invoice_number": "OCR-D-003",
+    "currency": "MYR"
+  },
+  {
+    "file": "output/pdf/ocr_test_invoices/degraded_scan_04_OCR-D-004.pdf",
+    "condition": "degraded_scan",
+    "supplier_name": "OfficeMart Supplies Enterprise",
+    "buyer_name": "ABC Manufacturing Sdn Bhd",
+    "invoice_date": "2026-09-09",
+    "amount": 430.0,
+    "description": "General office stationery",
+    "invoice_number": "OCR-D-004",
+    "currency": "MYR"
+  }
+]

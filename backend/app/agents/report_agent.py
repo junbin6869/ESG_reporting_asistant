@@ -19,13 +19,24 @@ from app.core.config import settings
 from app.core.llm import get_chat_model
 from app.core.report_format import report_contract, validate_report_content
 from app.db.database import db_session, decode_json, encode_json, utc_now
-from app.schemas import AgentRun, AgentStep, GenerateReportRequest, GeneratedReport, InvoiceRow
+from app.schemas import (
+    AgentRun,
+    AgentStep,
+    EvidenceItem,
+    GenerateReportRequest,
+    GeneratedReport,
+    InvoiceRow,
+)
 from app.services.invoice_service import list_invoices
 from app.services.rag_service import retrieve_guidelines
 from app.services.report_service import (
+    build_invoice_guideline_chunk_ids,
     build_reviewed_invoice_summary,
     get_report,
+    render_theme_performance_sections,
     save_report,
+    validate_and_render_guideline_citations,
+    validate_report_invoice_citations,
 )
 
 
@@ -105,12 +116,14 @@ class ReportGraphState(TypedDict, total=False):
     request: dict[str, str]
     invoice_summary: str
     reviewed_invoice_count: int
+    reviewed_invoice_snapshot: list[dict[str, Any]]
     messages: list[dict[str, Any]]
     seen_chunk_ids: list[str]
     search_calls: int
     loop_index: int
     pending_tool_requests: list[dict[str, str]]
     report_content: str
+    guideline_citation_snapshot: list[dict[str, Any]]
     report: dict[str, Any]
 
 
@@ -207,10 +220,15 @@ def _execute_report_agent(run_id: str) -> None:
 
     try:
         report = _run_autonomous_agent(run_id, run.request, persist=True)
+        _settle_open_steps(
+            run_id,
+            status="completed",
+            detail="Completed when the report run finished.",
+        )
         _update_run(run_id, status="completed", report=report, error=None)
         log_agent_event(run_id, "run_completed", report_id=report.id)
     except Exception as exc:
-        _fail_current_step(run_id, str(exc))
+        _settle_open_steps(run_id, status="failed", detail=str(exc))
         _update_run(run_id, status="failed", error=str(exc))
         log_agent_event(run_id, "run_failed", error=str(exc))
 
@@ -341,6 +359,9 @@ def _prepare_context_node(state: ReportGraphState) -> dict[str, Any]:
     return {
         "invoice_summary": invoice_summary,
         "reviewed_invoice_count": len(invoices),
+        "reviewed_invoice_snapshot": [
+            invoice.model_dump(mode="json") for invoice in invoices
+        ],
         "messages": [
             {"role": "system", "content": _build_agent_system_prompt()},
             {
@@ -385,9 +406,24 @@ def _agent_decision_node(state: ReportGraphState) -> dict[str, Any]:
         ),
     )
     decision = _request_agent_decision(messages, allow_search=allow_search)
-    messages.append(decision.assistant_message)
+    tool_requests = decision.tool_requests[:1]
+    assistant_message = dict(decision.assistant_message)
+    if tool_requests:
+        # Keep the message/tool protocol valid if a model ignores the one-tool
+        # instruction and asks for several parallel searches.
+        assistant_message["tool_calls"] = [
+            {
+                "id": tool_requests[0].id,
+                "type": "function",
+                "function": {
+                    "name": tool_requests[0].name,
+                    "arguments": tool_requests[0].arguments,
+                },
+            }
+        ]
+    messages.append(assistant_message)
 
-    if not decision.tool_requests:
+    if not tool_requests:
         content = decision.content.strip()
         if not content:
             raise ValueError("Agent returned neither a tool call nor report content.")
@@ -416,20 +452,20 @@ def _agent_decision_node(state: ReportGraphState) -> dict[str, Any]:
         run_id,
         step_id,
         status="completed",
-        detail=f"Agent requested {len(decision.tool_requests)} local ESG search call(s).",
+        detail="Agent requested 1 local ESG search call.",
     )
     log_agent_event(
         run_id,
         "agent_decision",
         loop_index=loop_index,
         decision="search_more",
-        requested_search_count=len(decision.tool_requests),
+        requested_search_count=1,
         search_calls_used=search_calls,
     )
     return {
         "messages": messages,
         "loop_index": loop_index,
-        "pending_tool_requests": [request.__dict__ for request in decision.tool_requests],
+        "pending_tool_requests": [tool_requests[0].__dict__],
     }
 
 
@@ -519,14 +555,35 @@ def _validate_report_node(state: ReportGraphState) -> dict[str, Any]:
             status="running",
         ),
     )
+    request = GenerateReportRequest.model_validate(state["request"])
+    invoices = _invoice_snapshot_from_state(state, request)
+    content = render_theme_performance_sections(content, invoices)
     validate_report_content(content)
+    validate_report_invoice_citations(
+        content,
+        invoices,
+        period_start=request.period_start,
+        period_end=request.period_end,
+    )
+    allowed_guideline_chunks = set(state.get("seen_chunk_ids", []))
+    allowed_guideline_chunks.update(build_invoice_guideline_chunk_ids(invoices))
+    content, guideline_citations = validate_and_render_guideline_citations(
+        content,
+        allowed_guideline_chunks,
+    )
     _set_step(
         run_id,
         step_id,
         status="completed",
-        detail="Required report sections, disclosures, and evidence markers are present.",
+        detail=(
+            "Required report sections, invoice citations, and guideline citations "
+            "are valid."
+        ),
     )
-    return {"report_content": content}
+    return {
+        "report_content": content,
+        "guideline_citation_snapshot": guideline_citations,
+    }
 
 
 def _save_report_node(state: ReportGraphState) -> dict[str, Any]:
@@ -547,6 +604,8 @@ def _save_report_node(state: ReportGraphState) -> dict[str, Any]:
         request,
         state["report_content"],
         source_run_id=run_id,
+        evidence_register_invoices=_invoice_snapshot_from_state(state, request),
+        guideline_citations=list(state.get("guideline_citation_snapshot", [])),
     )
     _set_step(
         run_id,
@@ -573,7 +632,11 @@ def _request_agent_decision(
 
     model = get_chat_model(temperature=0)
     if allow_search:
-        model = model.bind_tools([SEARCH_TOOL], tool_choice="auto")
+        model = model.bind_tools(
+            [SEARCH_TOOL],
+            tool_choice="auto",
+            parallel_tool_calls=False,
+        )
     message = model.invoke([_to_langchain_message(item) for item in messages])
     tool_requests = [
         ToolRequest(
@@ -686,6 +749,7 @@ def _execute_search_tool(
     top_k = max(1, min(top_k, MAX_TOOL_RESULTS))
     evidence = retrieve_guidelines(query, top_k=top_k)
     new_items = []
+    new_evidence_items: list[EvidenceItem] = []
     duplicate_count = 0
     for item in evidence:
         if item.chunk_id in seen_chunk_ids:
@@ -693,6 +757,7 @@ def _execute_search_tool(
             continue
         seen_chunk_ids.add(item.chunk_id)
         new_items.append(item.model_dump())
+        new_evidence_items.append(item)
 
     result = {
         "query": query,
@@ -705,7 +770,32 @@ def _execute_search_tool(
         f'Query "{query}" returned {len(new_items)} new guideline chunk(s)'
         f" and {duplicate_count} duplicate(s). Reason: {rationale[:300]}"
     )
+    source_summaries = _new_evidence_source_summaries(new_evidence_items)
+    if source_summaries:
+        detail += " New evidence: " + "; ".join(source_summaries)
     return result, detail, True
+
+
+def _new_evidence_source_summaries(
+    evidence: list[EvidenceItem],
+) -> list[str]:
+    """Return a compact, user-facing summary of newly retrieved guideline chunks."""
+    summaries: list[str] = []
+    displayed_sources: set[tuple[str, str, str]] = set()
+    # Only show up to three distinct source/topic/page combinations in the UI.
+    for item in evidence:
+        source = item.source.strip() or "Local ESG guideline"
+        topic = item.topic.strip() or item.section.strip() or "ESG guidance"
+        page = str(item.page) if item.page is not None else ""
+        key = (source, topic, page)
+        if key in displayed_sources:
+            continue
+        displayed_sources.add(key)
+        page_suffix = f", p. {page}" if page else ""
+        summaries.append(f"{source} — {topic}{page_suffix}")
+        if len(summaries) == 3:
+            break
+    return summaries
 
 
 def _get_tool_audit_fields(tool_request: ToolRequest) -> dict[str, Any]:
@@ -736,8 +826,20 @@ def _get_reviewed_invoices(period_start: str, period_end: str) -> list[InvoiceRo
     ]
 
 
+def _invoice_snapshot_from_state(
+    state: ReportGraphState,
+    request: GenerateReportRequest,
+) -> list[InvoiceRow]:
+    raw_snapshot = state.get("reviewed_invoice_snapshot")
+    if raw_snapshot is None:
+        # Backward compatibility for a checkpoint created before invoice snapshots
+        # were added to the graph state.
+        return _get_reviewed_invoices(request.period_start, request.period_end)
+    return [InvoiceRow.model_validate(invoice) for invoice in raw_snapshot]
+
+
 def _add_search_limit_disclosure(content: str) -> str:
-    heading = "8. Data Quality, Limitations and Missing KPIs"
+    heading = "6. Notable ESG Themes and Expenditure Narratives"
     disclosure = (
         f"\nLocal ESG research limit: The agent used all {MAX_SEARCH_CALLS} available "
         "guideline searches. Any remaining unsupported claims require additional "
@@ -769,6 +871,8 @@ Rules:
 - Search different ESG topics when invoices span multiple themes.
 - Stop searching when additional searches are unlikely to improve the report.
 - You may use at most {MAX_SEARCH_CALLS} local ESG searches.
+- Each decision may request at most one local ESG search call. After each search,
+  inspect the returned evidence before deciding whether another search is useful.
 - Every search call must include a concise rationale and the evidence gaps addressed.
 - If evidence remains incomplete, still produce the report and state the limitation.
 - When ready, respond with the complete report and do not call a tool.
@@ -847,11 +951,22 @@ def _set_step(run_id: str, step_id: str, status: str, detail: str | None) -> Non
     _update_run(run_id, steps=steps)
 
 
-def _fail_current_step(run_id: str, detail: str) -> None:
+def _settle_open_steps(run_id: str, *, status: str, detail: str) -> None:
+    """Close any stale queued/running UI steps when a run reaches a terminal state."""
     run = _require_run(run_id)
-    running = next((step for step in reversed(run.steps) if step.status == "running"), None)
-    if running:
-        _set_step(run_id, running.id, status="failed", detail=detail)
+    open_statuses = {"queued", "running"}
+    if not any(step.status in open_statuses for step in run.steps):
+        return
+    steps = [
+        AgentStep(
+            id=step.id,
+            label=step.label,
+            status=status if step.status in open_statuses else step.status,
+            detail=detail if step.status in open_statuses else step.detail,
+        )
+        for step in run.steps
+    ]
+    _update_run(run_id, steps=steps)
 
 
 def _persist_run(run: AgentRun) -> None:

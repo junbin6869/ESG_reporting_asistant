@@ -170,6 +170,49 @@ def init_db() -> None:
                 FOREIGN KEY(report_id) REFERENCES reports(id) ON DELETE CASCADE
             );
 
+            CREATE TABLE IF NOT EXISTS report_evidence_register_items (
+                id TEXT PRIMARY KEY,
+                report_id TEXT NOT NULL,
+                group_id TEXT NOT NULL,
+                group_name TEXT NOT NULL,
+                invoice_id TEXT NOT NULL,
+                invoice_number TEXT NOT NULL,
+                invoice_version INTEGER NOT NULL DEFAULT 1,
+                supplier_name TEXT NOT NULL,
+                invoice_date TEXT NOT NULL,
+                description TEXT NOT NULL,
+                amount REAL NOT NULL,
+                currency TEXT NOT NULL,
+                classification_category TEXT NOT NULL,
+                classification_status TEXT NOT NULL DEFAULT 'Reviewed',
+                classification_reason TEXT NOT NULL,
+                guideline_source TEXT,
+                guideline_section TEXT,
+                guideline_topic TEXT,
+                guideline_page TEXT,
+                guideline_chunk_id TEXT,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(report_id) REFERENCES reports(id) ON DELETE CASCADE
+            );
+
+            CREATE TABLE IF NOT EXISTS report_guideline_citations (
+                id TEXT PRIMARY KEY,
+                report_id TEXT NOT NULL,
+                occurrence_index INTEGER NOT NULL,
+                claim_text TEXT NOT NULL,
+                chunk_id TEXT NOT NULL,
+                source TEXT NOT NULL,
+                topic TEXT NOT NULL,
+                section TEXT NOT NULL,
+                page TEXT NOT NULL,
+                source_version TEXT NOT NULL DEFAULT '',
+                index_version TEXT NOT NULL DEFAULT '',
+                supporting_text TEXT NOT NULL,
+                validation_status TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(report_id) REFERENCES reports(id) ON DELETE CASCADE
+            );
+
             CREATE TABLE IF NOT EXISTS invoice_batches (
                 id TEXT PRIMARY KEY,
                 status TEXT NOT NULL,
@@ -253,6 +296,24 @@ def init_db() -> None:
             "INTEGER NOT NULL DEFAULT 1",
         )
         _ensure_column(db, "reports", "source_run_id", "TEXT")
+        _ensure_column(
+            db,
+            "report_evidence_register_items",
+            "invoice_version",
+            "INTEGER NOT NULL DEFAULT 1",
+        )
+        _ensure_column(
+            db,
+            "report_evidence_register_items",
+            "classification_status",
+            "TEXT NOT NULL DEFAULT 'Reviewed'",
+        )
+        _ensure_column(
+            db,
+            "report_guideline_citations",
+            "supporting_text",
+            "TEXT NOT NULL DEFAULT ''",
+        )
 
         _backfill_invoice_metadata(db)
         if classification_version_added:
@@ -285,6 +346,10 @@ def init_db() -> None:
                 ON classification_jobs(status, lease_expires_at);
             CREATE UNIQUE INDEX IF NOT EXISTS idx_reports_source_run_id
                 ON reports(source_run_id);
+            CREATE INDEX IF NOT EXISTS idx_report_evidence_register_report_group
+                ON report_evidence_register_items(report_id, group_id, invoice_date);
+            CREATE INDEX IF NOT EXISTS idx_report_guideline_citations_report
+                ON report_guideline_citations(report_id, occurrence_index);
             CREATE INDEX IF NOT EXISTS idx_report_agent_runs_status
                 ON report_agent_runs(status, updated_at);
             CREATE INDEX IF NOT EXISTS idx_report_agent_steps_run_sequence

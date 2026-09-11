@@ -223,7 +223,7 @@ material and is deliberately excluded to avoid duplicate/noisy chunks.
 ```powershell
 # Terminal 1
 cd backend
-.\.venv\Scripts\Activate.ps1
+.venv\Scripts\Activate.ps1
 uvicorn app.main:app --reload --port 8000
 
 # Terminal 2
@@ -278,9 +278,35 @@ npx tsc --noEmit
 npm run build
 ```
 
-The backend suite includes a 100-invoice batch import, concurrent job claims,
-retry limits, LangChain Retriever/structured-output tests, idempotent indexing,
-and persistent LangGraph execution.
+The backend suite contains 20 focused tests covering five core areas: invoice
+and batch persistence, RAG-based classification, guideline indexing, PDF/OCR
+extraction, and validated report generation/export. The tests use temporary
+databases and mocked LLM responses, so they do not consume API credits.
+
+## Evaluation scripts
+
+Build and validate the fixed 90-invoice labelled dataset:
+
+```powershell
+cd backend
+.\.venv\Scripts\python.exe scripts\build_manual_label_dataset.py
+.\.venv\Scripts\python.exe scripts\evaluate_manual_labels.py --allow-unvalidated --validate-only
+```
+
+Run the dataset through the real RAG and LLM pipeline. Results are written to
+`backend/evaluation/results/` and the isolated evaluation database allows an
+interrupted run to resume:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\evaluate_manual_labels.py --allow-unvalidated --workers 3
+```
+
+Create and evaluate the controlled 12-PDF OCR test set:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\build_ocr_test_pdfs.py
+.\.venv\Scripts\python.exe scripts\evaluate_ocr.py
+```
 
 ## MCP server
 

@@ -1,0 +1,61 @@
+{
+  "sample_count": 90,
+  "correct": 76,
+  "accuracy": 0.8444444444444444,
+  "macro_precision": 0.8835154615205766,
+  "macro_recall": 0.8509963768115942,
+  "macro_f1": 0.8462059620596205,
+  "evidence_coverage": 0.8111111111111111,
+  "per_class": {
+    "Environmental": {
+      "precision": 0.9565217391304348,
+      "recall": 1.0,
+      "f1": 0.9777777777777777,
+      "support": 22
+    },
+    "Social": {
+      "precision": 0.6363636363636364,
+      "recall": 1.0,
+      "f1": 0.7777777777777778,
+      "support": 21
+    },
+    "Governance": {
+      "precision": 1.0,
+      "recall": 0.7083333333333334,
+      "f1": 0.8292682926829268,
+      "support": 24
+    },
+    "Non-ESG": {
+      "precision": 0.9411764705882353,
+      "recall": 0.6956521739130435,
+      "f1": 0.7999999999999999,
+      "support": 23
+    }
+  },
+  "confusion_matrix": {
+    "Environmental": {
+      "Environmental": 22,
+      "Social": 0,
+      "Governance": 0,
+      "Non-ESG": 0
+    },
+    "Social": {
+      "Environmental": 0,
+      "Social": 21,
+      "Governance": 0,
+      "Non-ESG": 0
+    },
+    "Governance": {
+      "Environmental": 0,
+      "Social": 6,
+      "Governance": 17,
+      "Non-ESG": 1
+    },
+    "Non-ESG": {
+      "Environmental": 1,
+      "Social": 6,
+      "Governance": 0,
+      "Non-ESG": 16
+    }
+  }
+}

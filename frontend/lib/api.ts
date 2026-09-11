@@ -309,6 +309,49 @@ export async function downloadReportPdf(report: GeneratedReport) {
   URL.revokeObjectURL(url);
 }
 
+export async function downloadReportEvidenceRegister(report: GeneratedReport) {
+  const response = await fetch(
+    `${API_BASE_URL}/reports/${report.id}/evidence-register.csv`,
+    {
+      headers: {
+        Accept: "text/csv"
+      }
+    }
+  );
+
+  if (!response.ok) {
+    throw await buildApiError(response);
+  }
+
+  const blob = await response.blob();
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = `${report.title.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}-evidence-register.csv`;
+  anchor.click();
+  URL.revokeObjectURL(url);
+}
+
+export async function downloadReportPackage(report: GeneratedReport) {
+  const response = await fetch(`${API_BASE_URL}/reports/${report.id}/package.zip`, {
+    headers: {
+      Accept: "application/zip"
+    }
+  });
+
+  if (!response.ok) {
+    throw await buildApiError(response);
+  }
+
+  const blob = await response.blob();
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = `${report.title.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}-package.zip`;
+  anchor.click();
+  URL.revokeObjectURL(url);
+}
+
 function normalizeInvoiceBatch(
   value: unknown,
   fallbackTotal: number,
