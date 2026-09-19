@@ -7,7 +7,7 @@ REPORT_HEADINGS = [
     "3. Environmental Performance",
     "4. Social Performance",
     "5. Governance Performance",
-    "6. Notable ESG Themes and Expenditure Narratives",
+    "6. Executive Summary",
 ]
 
 PERFORMANCE_TABLE_HEADER = (
@@ -37,6 +37,11 @@ Mandatory reporting rules:
 - Treat Non-ESG invoices as excluded boundary items, not ESG performance.
 - Each Environmental, Social, and Governance section must start with a concise
   category-level spend overview, followed by an "Observed Themes" subsection.
+- Section 6 must provide a concise report-level summary of the reviewed invoice
+  findings. It should summarise the ESG expenditure pattern and key observed
+  themes from the preceding sections.
+- Do not mention the agent, guideline-search limit, or retrieval-call count in
+  the public report.
 - Every observed theme must state its total reviewed spend, cite the supplied
   [INV-GRP:...] reference, and include the supplied guideline marker that explains
   the related disclosure topic.

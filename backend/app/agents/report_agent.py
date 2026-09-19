@@ -543,8 +543,6 @@ def _search_guidelines_node(state: ReportGraphState) -> dict[str, Any]:
 def _validate_report_node(state: ReportGraphState) -> dict[str, Any]:
     run_id = state["run_id"]
     content = state.get("report_content", "").strip()
-    if int(state.get("search_calls", 0)) >= MAX_SEARCH_CALLS:
-        content = _add_search_limit_disclosure(content)
 
     step_id = "validate_report"
     _append_step(
@@ -836,20 +834,6 @@ def _invoice_snapshot_from_state(
         # were added to the graph state.
         return _get_reviewed_invoices(request.period_start, request.period_end)
     return [InvoiceRow.model_validate(invoice) for invoice in raw_snapshot]
-
-
-def _add_search_limit_disclosure(content: str) -> str:
-    heading = "6. Notable ESG Themes and Expenditure Narratives"
-    disclosure = (
-        f"\nLocal ESG research limit: The agent used all {MAX_SEARCH_CALLS} available "
-        "guideline searches. Any remaining unsupported claims require additional "
-        "source documents or human review.\n"
-    )
-    if disclosure.strip() in content:
-        return content
-    if heading in content:
-        return content.replace(heading, heading + disclosure, 1)
-    return content
 
 
 def _validate_report_content(content: str) -> None:

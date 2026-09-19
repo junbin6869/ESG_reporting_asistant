@@ -545,10 +545,7 @@ export default function InvoicesPage() {
               </div>
             ) : null}
             <p className="mt-2 max-w-3xl text-xs leading-5 text-slate-400">
-              JSON arrays and {`{ "invoices": [...] }`} are sent as one batch and
-              support 100+ records. PDFs are limited to 100 files, 10 MB each and
-              100 MB total; extraction runs three files at a time and each result is
-              reviewed separately.
+ 
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">

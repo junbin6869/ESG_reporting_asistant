@@ -1046,6 +1046,50 @@ def build_report_pdf(report_id: str) -> bytes:
             y += line_height
         y += gap_after
 
+    def write_bullet(text: str, *, level: int) -> None:
+        """Render a stable PDF bullet without relying on unsupported Unicode glyphs."""
+        nonlocal y
+        text = re.sub(r"(\*\*|`)", "", text)
+        marker_x = margin + 12 + (level * 18)
+        text_x = marker_x + 10
+        size = 10
+        line_height = size * 1.45
+        width = page_width - margin - text_x
+        max_chars = max(25, int(width / (size * 0.52)))
+        words = text.split()
+        lines: list[str] = []
+        current = ""
+        for word in words:
+            candidate = f"{current} {word}".strip()
+            if len(candidate) > max_chars and current:
+                lines.append(current)
+                current = word
+            else:
+                current = candidate
+        if current or not lines:
+            lines.append(current)
+
+        ensure_space((len(lines) * line_height) + 4)
+        marker_center = (marker_x + 2.5, y - (size * 0.32))
+        marker_color = (0.15, 0.23, 0.34) if level == 0 else (0.30, 0.36, 0.45)
+        page.draw_circle(
+            marker_center,
+            2.2 if level == 0 else 2.0,
+            color=marker_color,
+            fill=marker_color if level == 0 else None,
+            width=0.8,
+        )
+        for line in lines:
+            page.insert_text(
+                (text_x, y),
+                line,
+                fontsize=size,
+                fontname="helv",
+                color=marker_color,
+            )
+            y += line_height
+        y += 4
+
     def write_table(table_lines: list[str]) -> None:
         nonlocal y
         rows = [
@@ -1127,7 +1171,8 @@ def build_report_pdf(report_id: str) -> bytes:
     lines = report.content.splitlines()
     index = 0
     while index < len(lines):
-        raw = lines[index].strip()
+        source_line = lines[index]
+        raw = source_line.strip()
         if not raw:
             y += 5
             index += 1
@@ -1156,10 +1201,14 @@ def build_report_pdf(report_id: str) -> bytes:
                 font="helv",
                 gap_after=10,
             )
-        elif raw.startswith("- "):
-            write_wrapped(f"- {raw[2:]}", indent=12)
         else:
-            write_wrapped(raw)
+            bullet_match = re.match(r"^(\s*)-\s+(.*)$", source_line)
+            if bullet_match:
+                leading_whitespace, bullet_text = bullet_match.groups()
+                level = 1 if leading_whitespace else 0
+                write_bullet(bullet_text, level=level)
+            else:
+                write_wrapped(raw)
         index += 1
 
     for page_index, pdf_page in enumerate(document, start=1):

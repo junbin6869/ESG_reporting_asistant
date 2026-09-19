@@ -138,6 +138,37 @@ class CoreReportPipelineTests(unittest.TestCase):
         self.assertIn("Performance Overview", text)
         self.assertIn("Page 1", text)
 
+    @patch.object(report_service, "get_report")
+    def test_pdf_export_preserves_nested_bullet_indentation(self, get_report):
+        content = "\n".join(
+            [
+                "# Test section",
+                "- Parent theme",
+                "  - Nested supporting evidence",
+            ]
+        )
+        get_report.return_value = self._report(content)
+
+        pdf = report_service.build_report_pdf("report-1")
+        document = fitz.open(stream=pdf, filetype="pdf")
+        lines = [
+            line
+            for block in document[0].get_text("dict")["blocks"]
+            if "lines" in block
+            for line in block["lines"]
+        ]
+        document.close()
+
+        parent = next(
+            line for line in lines if "Parent theme" in "".join(span["text"] for span in line["spans"])
+        )
+        nested = next(
+            line
+            for line in lines
+            if "Nested supporting evidence" in "".join(span["text"] for span in line["spans"])
+        )
+        self.assertGreater(nested["bbox"][0], parent["bbox"][0])
+
     @staticmethod
     def _invoice(
         invoice_id: str,
